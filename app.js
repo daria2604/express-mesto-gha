@@ -3,6 +3,8 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const users = require('./routes/users');
 const cards = require('./routes/cards');
+const { NOT_FOUND } = require('./errors/status');
+const { pageNotFoundError } = require('./errors/messages');
 
 const { PORT = 3000 } = process.env;
 const app = express();
@@ -17,6 +19,9 @@ app.use((req, res, next) => {
 app.use(bodyParser.json());
 app.use('/users', users);
 app.use('/cards', cards);
+app.patch('*', (req, res) => {
+  res.status(NOT_FOUND).send({ message: pageNotFoundError });
+});
 
 mongoose.connect('mongodb://localhost:27017/mestodb');
 
