@@ -17,11 +17,18 @@ const getUsers = (req, res) => {
 
 const getUser = (req, res) => {
   User.findById(req.params.userId)
+    .orFail()
     .then((user) => {
       res.status(200).send(user);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
+        res.status(400).send({
+          message: 'Переданы некорректные данные при поиске пользователя.',
+        });
+      }
+
+      if (err.name === 'DocumentNotFoundError') {
         res
           .status(404)
           .send({ message: 'Пользователь по указанному _id не найден.' });

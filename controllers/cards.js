@@ -48,15 +48,16 @@ const likeCard = (req, res) =>
     { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
     { new: true }
   )
+    .orFail()
     .then((card) => {
       res.status(200).send(card);
     })
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (err.name === 'CastError') {
         res.status(400).send({
           message: 'Переданы некорректные данные для постановки лайка.',
         });
-      } else if (err.name === 'CastError') {
+      } else if (err.name === 'DocumentNotFoundError') {
         res
           .status(404)
           .send({ message: 'Передан несуществующий _id карточки.' });
@@ -71,16 +72,17 @@ const unlikeCard = (req, res) =>
     { $pull: { likes: req.user._id } }, // убрать _id из массива
     { new: true }
   )
+    .orFail()
     .then((card) => {
       res.status(200).send(card);
     })
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (err.name === 'CastError') {
         res.status(400).send({
           message: 'Переданы некорректные данные для снятия лайка.',
         });
       }
-      if (err.name === 'CastError') {
+      if (err.name === 'DocumentNotFoundError') {
         res
           .status(404)
           .send({ message: 'Передан несуществующий _id карточки.' });
