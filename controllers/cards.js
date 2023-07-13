@@ -38,6 +38,7 @@ const createCard = (req, res) => {
         res.status(BAD_REQUEST).send({
           message: cardCreateValidationErrorMessage,
         });
+        return;
       }
 
       res.status(SERVER_ERROR).send({ message: serverErrorMessage });
@@ -53,10 +54,12 @@ const deleteCard = (req, res) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         res.status(BAD_REQUEST).send({ message: cardBadRequestErrorMessage });
+        return;
       }
 
       if (err.name === 'DocumentNotFoundError') {
         res.status(NOT_FOUND).send({ message: cardNotFoundErrorMessage });
+        return;
       }
 
       res.status(SERVER_ERROR).send({ message: serverErrorMessage });
@@ -78,10 +81,12 @@ const likeCard = (req, res) =>
         res.status(BAD_REQUEST).send({
           message: cardLikeErrorMessage,
         });
+        return;
       }
 
       if (err.name === 'DocumentNotFoundError') {
         res.status(NOT_FOUND).send({ message: cardNotFoundErrorMessage });
+        return;
       }
 
       res.status(SERVER_ERROR).send({ message: serverErrorMessage });
@@ -100,10 +105,12 @@ const unlikeCard = (req, res) =>
     .catch((err) => {
       if (err.name === 'CastError') {
         res.status(BAD_REQUEST).send({ message: cardUnlikeErrorMessage });
+        return;
       }
 
       if (err.name === 'DocumentNotFoundError') {
         res.status(NOT_FOUND).send({ message: cardNotFoundErrorMessage });
+        return;
       }
 
       res.status(SERVER_ERROR).send({ message: serverErrorMessage });

@@ -41,10 +41,12 @@ const getUser = (req, res) => {
         res.status(BAD_REQUEST).send({
           message: userBadRequestErrorMessage,
         });
+        return;
       }
 
       if (err.name === 'DocumentNotFoundError') {
         res.status(NOT_FOUND).send({ message: userNotFoundErrorMessage });
+        return;
       }
       res.status(SERVER_ERROR).send({ message: serverErrorMessage });
     });
@@ -60,6 +62,7 @@ const createUser = (req, res) =>
         res.status(BAD_REQUEST).send({
           message: userCreateValidationErrorMessage,
         });
+        return;
       }
       res.status(SERVER_ERROR).send({ message: serverErrorMessage });
     });
@@ -73,9 +76,11 @@ const updateProfile = (req, res) => {
         res.status(BAD_REQUEST).send({
           message: userUpdateValidationErrorMessage,
         });
+        return;
       }
       if (err.name === 'CastError') {
         res.status(NOT_FOUND).send({ message: userNotFoundErrorMessage });
+        return;
       }
       res.status(SERVER_ERROR).send({ message: serverErrorMessage });
     });
@@ -90,9 +95,11 @@ const updateAvatar = (req, res) => {
         res.status(BAD_REQUEST).send({
           message: avatarUpdateValidationErrorMessage,
         });
+        return;
       }
       if (err.name === 'CastError') {
         res.status(NOT_FOUND).send({ message: userNotFoundErrorMessage });
+        return;
       }
       res.status(SERVER_ERROR).send({ message: serverErrorMessage });
     });
