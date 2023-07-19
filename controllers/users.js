@@ -1,3 +1,4 @@
+const bcrypt = require('bcrypt');
 const User = require('../models/user');
 const {
   OK,
@@ -52,20 +53,26 @@ const getUser = (req, res) => {
     });
 };
 
-const createUser = (req, res) =>
-  User.create({ ...req.body })
-    .then((user) => {
-      res.status(CREATED).send(user);
+const createUser = (req, res) => {
+  bcrypt.hash(req.body.password, 10).then((hash) => {
+    User.create({
+      email: req.body.email,
+      password: hash,
     })
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        res.status(BAD_REQUEST).send({
-          message: userCreateValidationErrorMessage,
-        });
-        return;
-      }
-      res.status(SERVER_ERROR).send({ message: serverErrorMessage });
-    });
+      .then(({ _id, email }) => {
+        res.status(CREATED).send({ _id, email });
+      })
+      .catch((err) => {
+        if (err.name === 'ValidationError') {
+          res.status(BAD_REQUEST).send({
+            message: userCreateValidationErrorMessage,
+          });
+          return;
+        }
+        res.status(SERVER_ERROR).send({ message: serverErrorMessage });
+      });
+  });
+};
 
 const updateProfile = (req, res) => {
   const { name, about } = req.body;
