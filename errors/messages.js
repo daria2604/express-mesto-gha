@@ -3,6 +3,7 @@ module.exports = {
   userNotFoundErrorMessage: 'Пользователь по указанному _id не найден.',
   userCreateValidationErrorMessage: 'Переданы некорректные данные при создании пользователя.',
   userUpdateValidationErrorMessage: 'Переданы некорректные данные при обновлении профиля.',
+  authorizationErrorMessage: 'Неправильные почта или пароль',
   avatarUpdateValidationErrorMessage: 'Переданы некорректные данные при обновлении аватара.',
   cardCreateValidationErrorMessage: 'Переданы некорректные данные при создании карточки.',
   cardBadRequestErrorMessage: 'Переданы некорректные данные карточки.',

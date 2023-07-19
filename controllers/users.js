@@ -1,9 +1,11 @@
 const bcrypt = require('bcrypt');
+const { generateToken } = require('../utils/token');
 const User = require('../models/user');
 const {
   OK,
   CREATED,
   BAD_REQUEST,
+  UNAUTHORIZED,
   NOT_FOUND,
   SERVER_ERROR,
 } = require('../errors/status');
@@ -13,6 +15,7 @@ const {
   userCreateValidationErrorMessage,
   userUpdateValidationErrorMessage,
   avatarUpdateValidationErrorMessage,
+  authorizationErrorMessage,
   serverErrorMessage,
 } = require('../errors/messages');
 
@@ -54,13 +57,14 @@ const getUser = (req, res) => {
 };
 
 const createUser = (req, res) => {
-  bcrypt.hash(req.body.password, 10).then((hash) => {
+  const { email, password } = req.body;
+  bcrypt.hash(password, 10).then((hash) => {
     User.create({
-      email: req.body.email,
+      email,
       password: hash,
     })
-      .then(({ _id, email }) => {
-        res.status(CREATED).send({ _id, email });
+      .then((user) => {
+        res.status(CREATED).send({ _id: user._id, email: user.email });
       })
       .catch((err) => {
         if (err.name === 'ValidationError') {
@@ -112,4 +116,25 @@ const updateAvatar = (req, res) => {
     });
 };
 
-module.exports = { getUsers, getUser, createUser, updateProfile, updateAvatar };
+const login = (req, res) => {
+  const { email, password } = req.body;
+
+  User.findUserByCredentials(email, password)
+    .then((user) => {
+      const token = generateToken({ _id: user._id });
+
+      res.cookie(token).send({ _id: user._id });
+    })
+    .catch((err) => {
+      res.status(UNAUTHORIZED).send({ message: authorizationErrorMessage });
+    });
+};
+
+module.exports = {
+  getUsers,
+  getUser,
+  createUser,
+  updateProfile,
+  updateAvatar,
+  login,
+};

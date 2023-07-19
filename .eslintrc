@@ -17,6 +17,8 @@
         "args": "none",
         "ignoreRestSiblings": false
         }
-    ]
+    ],
+    "func-names": "off",
+    "consistent-return": "off"
   }
 }

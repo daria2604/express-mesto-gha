@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const users = require('./routes/users');
 const cards = require('./routes/cards');
+const { login } = require('./controllers/users')
 const { NOT_FOUND } = require('./errors/status');
 const { pageNotFoundErrorMessage } = require('./errors/messages');
 
@@ -19,6 +20,7 @@ app.use((req, res, next) => {
   next();
 });
 app.use(bodyParser.json());
+app.post('/signin', login);
 app.use('/users', users);
 app.use('/cards', cards);
 app.patch('*', (req, res) => {
