@@ -15,7 +15,7 @@ const {
   userCreateValidationErrorMessage,
   userUpdateValidationErrorMessage,
   avatarUpdateValidationErrorMessage,
-  authorizationErrorMessage,
+  authenticationErrorMessage,
   serverErrorMessage,
 } = require('../errors/messages');
 
@@ -58,6 +58,7 @@ const getUser = (req, res) => {
 
 const createUser = (req, res) => {
   const { email, password } = req.body;
+
   bcrypt.hash(password, 10).then((hash) => {
     User.create({
       email,
@@ -126,7 +127,7 @@ const login = (req, res) => {
       res.cookie(token).send({ _id: user._id });
     })
     .catch((err) => {
-      res.status(UNAUTHORIZED).send({ message: authorizationErrorMessage });
+      res.status(UNAUTHORIZED).send({ message: authenticationErrorMessage });
     });
 };
 
