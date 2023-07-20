@@ -26,6 +26,7 @@ const userSchema = new mongoose.Schema(
     email: {
       type: String,
       required: [true, 'Поле "email" должно быть заполнено'],
+      unique: [true, 'Пользователь с таким email уже существует.'],
       validate: {
         validator: (v) => validator.isEmail(v),
         message: 'Некорректный email или пароль',

@@ -12,5 +12,7 @@ module.exports = {
   cardLikeErrorMessage: 'Переданы некорректные данные для постановки лайка.',
   cardUnlikeErrorMessage: 'Переданы некорректные данные для снятия лайка.',
   pageNotFoundErrorMessage: 'Страница не найдена.',
+  conflictErrorMessage: 'Пользователь с таким email уже существует.',
+  forbiddenErrorMessage: 'Вы можете удалять только свои карточки.',
   serverErrorMessage: 'Произошла ошибка в работе сервера.',
 }

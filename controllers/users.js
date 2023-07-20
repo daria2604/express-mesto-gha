@@ -8,8 +8,13 @@ const {
   userCreateValidationErrorMessage,
   userUpdateValidationErrorMessage,
   avatarUpdateValidationErrorMessage,
+  conflictErrorMessage,
 } = require('../errors/messages');
-const { NotFoundError, BadRequestError } = require('../errors/errorClasses');
+const {
+  ConflictError,
+  NotFoundError,
+  BadRequestError,
+} = require('../errors/errorClasses');
 
 const options = {
   new: true, // обработчик then получит на вход обновлённую запись
@@ -72,9 +77,11 @@ const createUser = (req, res, next) => {
       .catch((err) => {
         if (err.name === 'ValidationError') {
           next(new BadRequestError(userCreateValidationErrorMessage));
-        } else {
-          next(err);
         }
+        if (err.code === 11000) {
+          next(new ConflictError(conflictErrorMessage));
+        }
+        next(err);
       });
   });
 };

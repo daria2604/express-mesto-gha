@@ -6,8 +6,13 @@ const {
   cardNotFoundErrorMessage,
   cardLikeErrorMessage,
   cardUnlikeErrorMessage,
+  forbiddenErrorMessage,
 } = require('../errors/messages');
-const { NotFoundError, BadRequestError } = require('../errors/errorClasses');
+const {
+  NotFoundError,
+  ForbiddenError,
+  BadRequestError,
+} = require('../errors/errorClasses');
 
 const getCards = (req, res, next) => {
   Card.find({})
@@ -33,19 +38,27 @@ const createCard = (req, res, next) => {
 };
 
 const deleteCard = (req, res, next) => {
-  Card.findByIdAndRemove(req.params.cardId)
+  Card.findById(req.params.cardId)
     .then((card) => {
       if (!card) {
         throw new NotFoundError(cardNotFoundErrorMessage);
       }
-      res.status(OK).send(card);
+
+      if (card.owner.toString() !== req.user._id) {
+        throw new ForbiddenError(forbiddenErrorMessage);
+      }
+      Card.findByIdAndRemove(req.params.cardId).then((myCard) => {
+        if (!myCard) {
+          throw new NotFoundError(cardNotFoundErrorMessage);
+        }
+        res.status(OK).send(myCard);
+      });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new BadRequestError(cardBadRequestErrorMessage));
-      } else {
-        next(err);
       }
+      next(err);
     });
 };
 
