@@ -1,31 +1,21 @@
 const Card = require('../models/card');
-const {
-  OK,
-  CREATED,
-  BAD_REQUEST,
-  NOT_FOUND,
-  SERVER_ERROR,
-} = require('../errors/status');
+const { OK, CREATED } = require('../errors/status');
 const {
   cardCreateValidationErrorMessage,
   cardBadRequestErrorMessage,
   cardNotFoundErrorMessage,
   cardLikeErrorMessage,
   cardUnlikeErrorMessage,
-  serverErrorMessage,
 } = require('../errors/messages');
+const { NotFoundError, BadRequestError } = require('../errors/errorClasses');
 
-const getCards = (req, res) => {
+const getCards = (req, res, next) => {
   Card.find({})
-    .then((cards) => {
-      res.send(cards);
-    })
-    .catch((err) => {
-      res.status(SERVER_ERROR).send({ message: serverErrorMessage });
-    });
+    .then((cards) => res.send(cards))
+    .catch(next);
 };
 
-const createCard = (req, res) => {
+const createCard = (req, res, next) => {
   const { name, link } = req.body;
   const owner = req.user._id;
 
@@ -35,85 +25,68 @@ const createCard = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(BAD_REQUEST).send({
-          message: cardCreateValidationErrorMessage,
-        });
-        return;
+        next(new BadRequestError(cardCreateValidationErrorMessage));
+      } else {
+        next(err);
       }
-
-      res.status(SERVER_ERROR).send({ message: serverErrorMessage });
     });
 };
 
-const deleteCard = (req, res) => {
+const deleteCard = (req, res, next) => {
   Card.findByIdAndRemove(req.params.cardId)
-    .orFail()
     .then((card) => {
+      if (!card) {
+        throw new NotFoundError(cardNotFoundErrorMessage);
+      }
       res.status(OK).send(card);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(BAD_REQUEST).send({ message: cardBadRequestErrorMessage });
-        return;
+        next(new BadRequestError(cardBadRequestErrorMessage));
+      } else {
+        next(err);
       }
-
-      if (err.name === 'DocumentNotFoundError') {
-        res.status(NOT_FOUND).send({ message: cardNotFoundErrorMessage });
-        return;
-      }
-
-      res.status(SERVER_ERROR).send({ message: serverErrorMessage });
     });
 };
 
-const likeCard = (req, res) =>
+const likeCard = (req, res, next) =>
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
     { new: true }
   )
-    .orFail()
     .then((card) => {
+      if (!card) {
+        throw new NotFoundError(cardNotFoundErrorMessage);
+      }
       res.status(OK).send(card);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(BAD_REQUEST).send({
-          message: cardLikeErrorMessage,
-        });
-        return;
+        next(new BadRequestError(cardLikeErrorMessage));
+      } else {
+        next(err);
       }
-
-      if (err.name === 'DocumentNotFoundError') {
-        res.status(NOT_FOUND).send({ message: cardNotFoundErrorMessage });
-        return;
-      }
-
-      res.status(SERVER_ERROR).send({ message: serverErrorMessage });
     });
 
-const unlikeCard = (req, res) =>
+const unlikeCard = (req, res, next) =>
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $pull: { likes: req.user._id } }, // убрать _id из массива
     { new: true }
   )
-    .orFail()
     .then((card) => {
+      if (!card) {
+        throw new NotFoundError(cardNotFoundErrorMessage);
+      }
       res.status(OK).send(card);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(BAD_REQUEST).send({ message: cardUnlikeErrorMessage });
-        return;
+        next(new BadRequestError(cardUnlikeErrorMessage));
+      } else {
+        next(err);
       }
-
-      if (err.name === 'DocumentNotFoundError') {
-        res.status(NOT_FOUND).send({ message: cardNotFoundErrorMessage });
-        return;
-      }
-
-      res.status(SERVER_ERROR).send({ message: serverErrorMessage });
     });
 
 module.exports = { getCards, createCard, deleteCard, likeCard, unlikeCard };
