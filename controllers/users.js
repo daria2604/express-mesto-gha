@@ -45,14 +45,12 @@ const getUser = (req, res, next) => {
 };
 
 const getCurrentUser = (req, res, next) => {
-  console.log(req.user);
-
   User.findById(req.user._id)
     .then((user) => {
       if (!user) {
         throw new NotFoundError(userNotFoundErrorMessage);
       }
-      res.status(OK).send({ user });
+      res.status(OK).send({user});
     })
     .catch((err) => {
       if (err.name === 'CastError') {
