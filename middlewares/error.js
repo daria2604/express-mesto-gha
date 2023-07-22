@@ -1,4 +1,4 @@
-const { SERVER_ERROR } = require('../errors/status');
+const { SERVER_ERROR } = require('../utils/statusCodes');
 const { serverErrorMessage } = require('../errors/messages');
 
 module.exports = (err, req, res, next) => {

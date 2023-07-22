@@ -1,7 +1,7 @@
 const bcrypt = require('bcrypt');
 const { generateToken } = require('../utils/token');
 const User = require('../models/user');
-const { OK, CREATED } = require('../errors/status');
+const { OK, CREATED } = require('../utils/statusCodes');
 const {
   userBadRequestErrorMessage,
   userNotFoundErrorMessage,
@@ -91,7 +91,7 @@ const updateProfile = (req, res, next) => {
       if (!user) {
         throw new NotFoundError(userNotFoundErrorMessage);
       }
-      res.status(200).send(user);
+      res.status(OK).send(user);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
@@ -109,7 +109,7 @@ const updateAvatar = (req, res, next) => {
       if (!user) {
         throw new NotFoundError(userNotFoundErrorMessage);
       }
-      res.status(200).send(user);
+      res.status(OK).send(user);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {

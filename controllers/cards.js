@@ -1,5 +1,5 @@
 const Card = require('../models/card');
-const { OK, CREATED } = require('../errors/status');
+const { OK, CREATED } = require('../utils/statusCodes');
 const {
   cardCreateValidationErrorMessage,
   cardBadRequestErrorMessage,
@@ -16,7 +16,7 @@ const {
 
 const getCards = (req, res, next) => {
   Card.find({})
-    .then((cards) => res.send(cards))
+    .then((cards) => res.status(OK).send(cards))
     .catch(next);
 };
 
