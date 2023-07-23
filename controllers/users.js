@@ -50,7 +50,7 @@ const getCurrentUser = (req, res, next) => {
       if (!user) {
         throw new NotFoundError(userNotFoundErrorMessage);
       }
-      res.status(OK).send({user});
+      res.status(OK).send({ user });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -70,7 +70,15 @@ const createUser = (req, res, next) => {
       password: hash,
     })
       .then((user) => {
-        res.status(CREATED).send({ _id: user._id, email: user.email });
+        res
+          .status(CREATED)
+          .send({
+            email: user.email,
+            password: user.password,
+            name: user.name,
+            about: user.about,
+            avatar: user.avatar,
+          });
       })
       .catch((err) => {
         if (err.name === 'ValidationError') {
