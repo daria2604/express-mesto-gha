@@ -3,6 +3,7 @@ const validator = require('validator');
 const bcrypt = require('bcrypt');
 const { UnauthorizedError } = require('../errors/errorClasses');
 const { authenticationErrorMessage } = require('../errors/messages');
+const avatarUrlRegEx = require('../utils/avatarUrlRegEx');
 
 const userSchema = new mongoose.Schema(
   {
@@ -22,6 +23,10 @@ const userSchema = new mongoose.Schema(
       type: String,
       default:
         'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
+      validate: {
+        validator: (v) => avatarUrlRegEx.test(v),
+        message: 'Некорректный url',
+      },
     },
     email: {
       type: String,
