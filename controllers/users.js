@@ -74,7 +74,6 @@ const createUser = (req, res, next) => {
           .status(CREATED)
           .send({
             email: user.email,
-            password: user.password,
             name: user.name,
             about: user.about,
             avatar: user.avatar,
