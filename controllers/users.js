@@ -33,7 +33,7 @@ const getUser = (req, res, next) => {
       if (!user) {
         throw new NotFoundError(userNotFoundErrorMessage);
       }
-      res.status(OK).send({user});
+      res.status(OK).send(user);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -62,22 +62,23 @@ const getCurrentUser = (req, res, next) => {
 };
 
 const createUser = (req, res, next) => {
-  const { email, password } = req.body;
+  const { email, password, name, about, avatar } = req.body;
 
   bcrypt.hash(password, 10).then((hash) => {
     User.create({
       email,
       password: hash,
+      name,
+      about,
+      avatar,
     })
       .then((user) => {
-        res
-          .status(CREATED)
-          .send({
-            email: user.email,
-            name: user.name,
-            about: user.about,
-            avatar: user.avatar,
-          });
+        res.status(CREATED).send({
+          email: user.email,
+          name: user.name,
+          about: user.about,
+          avatar: user.avatar,
+        });
       })
       .catch((err) => {
         if (err.name === 'ValidationError') {
