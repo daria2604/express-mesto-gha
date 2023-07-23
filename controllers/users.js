@@ -33,7 +33,7 @@ const getUser = (req, res, next) => {
       if (!user) {
         throw new NotFoundError(userNotFoundErrorMessage);
       }
-      res.status(OK).send(user);
+      res.status(OK).send({user});
     })
     .catch((err) => {
       if (err.name === 'CastError') {
