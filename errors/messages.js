@@ -14,5 +14,6 @@ module.exports = {
   pageNotFoundErrorMessage: 'Страница не найдена.',
   conflictErrorMessage: 'Пользователь с таким email уже существует.',
   forbiddenErrorMessage: 'Вы можете удалять только свои карточки.',
+  limitErrorMessage: 'Превышен лимит запросов с этого IP',
   serverErrorMessage: 'Произошла ошибка в работе сервера.',
 }
