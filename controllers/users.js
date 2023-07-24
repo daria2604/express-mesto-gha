@@ -83,9 +83,11 @@ const createUser = (req, res, next) => {
       .catch((err) => {
         if (err.name === 'ValidationError') {
           next(new BadRequestError(userCreateValidationErrorMessage));
+          return;
         }
         if (err.code === 11000) {
           next(new ConflictError(conflictErrorMessage));
+          return;
         }
         next(err);
       });
